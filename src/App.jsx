@@ -3,12 +3,14 @@ import { useState } from 'react';
 import Listitem from './components/Listitem';
 
 function App() {
-  const [items, setItems] = useState(['apple', 'banana']);
+  const [items, setItems] = useState(["apple", "cherry"]);
   const [name, setName] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(null);
 
   // remove/delete
   const deleteItem = (index) => {
-    const newItems = items.filter((el, i) => i != index);
+    const newItems = items.filter( (el, i) => i != index );
     setItems(newItems);
   }
 
@@ -19,11 +21,31 @@ function App() {
     setName("");
   }
 
+  // edit item
+  const editItem = (index) => {
+    setName(items[index]);
+    setEditing(true);
+    setCurrentIndex(index);
+  }
+
+  // save editing item
+ const updateItem = () => {
+    const updatedItems = items.map( (el, i) => (i == currentIndex) ? name: el );
+    setItems(updatedItems);
+    setName("");
+    setEditing(false);
+    setCurrentIndex(null);
+ }
+
   return (
     <div>
       <div className='d-flex gap-2 mb-3'>
-        <input className='form-control' onChange={(e) => {setName(e.target.value)}  } value={name} type='text' placeholder='New' />
-        <button className='btn btn-sm btn-warning' onClick={addItem}>Add</button>
+        <input className='form-control' onChange={ (e) => { setName(e.target.value) }  } value={name} type='text' placeholder='New' />
+        <button className='btn btn-sm btn-warning' onClick={ (editing == true) ? updateItem: addItem }>
+          {
+             (editing == true) ? "Update": "Add"
+          }
+        </button>
       </div>
       <table className="table table-bordered" style={{ width: "500px" }}>
 
@@ -38,7 +60,7 @@ function App() {
           {
             items.map((item, i) => {
               return (
-                <Listitem deleteItem={deleteItem} item={item} key={i} index={i} />
+                <Listitem deleteItem={deleteItem} editItem={editItem} item={item} index={i} key={i} />
               )
             })
           }
