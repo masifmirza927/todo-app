@@ -10,7 +10,7 @@ function App() {
 
   // remove/delete
   const deleteItem = (index) => {
-    const newItems = items.filter( (el, i) => i != index );
+    const newItems = items.filter((el, i) => i != index);
     setItems(newItems);
   }
 
@@ -29,21 +29,28 @@ function App() {
   }
 
   // save editing item
- const updateItem = () => {
-    const updatedItems = items.map( (el, i) => (i == currentIndex) ? name: el );
+  const updateItem = () => {
+    const updatedItems = items.map((el, i) => (i == currentIndex) ? name : el);
     setItems(updatedItems);
     setName("");
     setEditing(false);
     setCurrentIndex(null);
- }
+  }
+
+  //todo detech if editing mode is ON then updateItem will run otherwsie addItem will run
+  const handleEntrePress =  (e) => {
+      if(e.key == "Enter") {
+        addItem();
+      }
+  }
 
   return (
     <div>
       <div className='d-flex gap-2 mb-3'>
-        <input className='form-control' onChange={ (e) => { setName(e.target.value) }  } value={name} type='text' placeholder='New' />
-        <button className='btn btn-sm btn-warning' onClick={ (editing == true) ? updateItem: addItem }>
+        <input className='form-control' onKeyUp={handleEntrePress}  onChange={(e) => { setName(e.target.value) }} value={name} type='text' placeholder='New' />
+        <button className='btn btn-sm btn-warning' onClick={(editing == true) ? updateItem : addItem}>
           {
-             (editing == true) ? "Update": "Add"
+            (editing == true) ? "Update" : "Add"
           }
         </button>
       </div>
