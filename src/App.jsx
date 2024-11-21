@@ -1,5 +1,5 @@
 import './App.css'
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Listitem from './components/Listitem';
 
 function App() {
@@ -7,11 +7,14 @@ function App() {
   const [name, setName] = useState("");
   const [editing, setEditing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
+  const inputRef = useRef(null); // reference
 
   // remove/delete
   const deleteItem = (index) => {
-    const newItems = items.filter((el, i) => i != index);
-    setItems(newItems);
+    if (confirm("are you sure to delete ?")) {
+      const newItems = items.filter((el, i) => i != index);
+      setItems(newItems);
+    }
   }
 
   // add new item
@@ -26,6 +29,7 @@ function App() {
     setName(items[index]);
     setEditing(true);
     setCurrentIndex(index);
+    inputRef.current.focus();
   }
 
   // save editing item
@@ -38,16 +42,16 @@ function App() {
   }
 
   //todo detech if editing mode is ON then updateItem will run otherwsie addItem will run
-  const handleEntrePress =  (e) => {
-      if(e.key == "Enter") {
-        addItem();
-      }
+  const handleEntrePress = (e) => {
+    if (e.key == "Enter") {
+      (editing == true) ? updateItem() : addItem()
+    }
   }
 
   return (
     <div>
       <div className='d-flex gap-2 mb-3'>
-        <input className='form-control' onKeyUp={handleEntrePress}  onChange={(e) => { setName(e.target.value) }} value={name} type='text' placeholder='New' />
+        <input className='form-control' ref={inputRef} onKeyUp={handleEntrePress} onChange={(e) => { setName(e.target.value) }} value={name} type='text' placeholder='New' />
         <button className='btn btn-sm btn-warning' onClick={(editing == true) ? updateItem : addItem}>
           {
             (editing == true) ? "Update" : "Add"
